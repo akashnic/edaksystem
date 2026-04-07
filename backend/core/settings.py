@@ -153,10 +153,9 @@ STORAGES = {
     },
 }
 
-# Fix for whitenoise.storage.MissingFileError during collectstatic
-WHITENOISE_MANIFEST_STRICT = False
-
-# Legacy storage settings were removed as they conflict with STORAGES in Django 4.2+
+# Compatibility for older libraries (like cloudinary-storage) that don't know about STORAGES
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # Change default to Cloudinary if configured
 if os.getenv('CLOUDINARY_CLOUD_NAME'):
@@ -168,9 +167,8 @@ if os.getenv('CLOUDINARY_CLOUD_NAME'):
     STORAGES["default"] = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
     }
-    STORAGES["default"] = {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
-    }
+    # Compatibility mapping for cloudinary-storage
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
