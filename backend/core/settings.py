@@ -151,6 +151,9 @@ STORAGES = {
     },
 }
 
+# Fix for whitenoise.storage.MissingFileError during collectstatic
+WHITENOISE_MANIFEST_STRICT = False
+
 # Compatibility for older libraries that don't know about STORAGES['staticfiles']
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
