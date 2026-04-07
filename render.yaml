@@ -2,6 +2,7 @@ services:
   - type: web
     name: edak-backend
     env: python
+    rootContext: backend
     buildCommand: "./build.sh"
     startCommand: "gunicorn core.wsgi:application"
     envVars:
