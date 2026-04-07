@@ -140,20 +140,20 @@ frontend_dist = os.path.join(BASE_DIR.parent, 'frontend', 'dist')
 if os.path.exists(frontend_dist):
     STATICFILES_DIRS.append(frontend_dist)
 
-# Storage and Whitenoise configuration
-# Using CompressedStaticFilesStorage (not Manifest) to avoid MissingFileError
-# during collectstatic when Django Admin CSS references files not found on disk.
+# Storage configuration
+# Using plain StaticFilesStorage on the server since the React frontend
+# is hosted on Vercel — no need for compression/fingerprinting here.
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
 # Compatibility for older libraries (like cloudinary-storage) that access legacy settings
-STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # Change default to Cloudinary if configured
