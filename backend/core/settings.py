@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
@@ -87,14 +90,10 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'edaksystem',
-        'USER': 'iwave',
-        'PASSWORD': '',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+    'default': dj_database_url.config(
+        default=os.getenv('DATABASE_URL', 'postgres://iwave:@localhost:5432/edaksystem'),
+        conn_max_age=600
+    )
 }
 
 
@@ -135,10 +134,12 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Add the frontend dist folder to static files search path
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR.parent, 'frontend', 'dist'),
-]
+# Add the frontend dist folder to static files search path if it exists (for local dev)
+frontend_dist = os.path.join(BASE_DIR.parent, 'frontend', 'dist')
+if os.path.exists(frontend_dist):
+    STATICFILES_DIRS = [
+        frontend_dist,
+    ]
 
 # Whitenoise configuration
 STORAGES = {
@@ -149,6 +150,17 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# Change default to Cloudinary if configured
+if os.getenv('CLOUDINARY_CLOUD_NAME'):
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+        'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+    }
+    STORAGES["default"] = {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
+    }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
