@@ -134,12 +134,14 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Add the frontend dist folder to static files search path if it exists (for local dev)
+# Add project static files and frontend dist folder
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 frontend_dist = os.path.join(BASE_DIR.parent, 'frontend', 'dist')
 if os.path.exists(frontend_dist):
-    STATICFILES_DIRS = [
-        frontend_dist,
-    ]
+    STATICFILES_DIRS.append(frontend_dist)
 
 # Storage and Whitenoise configuration
 STORAGES = {
@@ -154,9 +156,7 @@ STORAGES = {
 # Fix for whitenoise.storage.MissingFileError during collectstatic
 WHITENOISE_MANIFEST_STRICT = False
 
-# Compatibility for older libraries that don't know about STORAGES['staticfiles']
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+# Legacy storage settings were removed as they conflict with STORAGES in Django 4.2+
 
 # Change default to Cloudinary if configured
 if os.getenv('CLOUDINARY_CLOUD_NAME'):
@@ -168,8 +168,9 @@ if os.getenv('CLOUDINARY_CLOUD_NAME'):
     STORAGES["default"] = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
     }
-    # Compatibility for older libraries that don't know about STORAGES['default']
-    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+    STORAGES["default"] = {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
+    }
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
