@@ -141,7 +141,7 @@ if os.path.exists(frontend_dist):
         frontend_dist,
     ]
 
-# Whitenoise configuration
+# Storage and Whitenoise configuration
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -150,6 +150,10 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# Compatibility for older libraries that don't know about STORAGES['staticfiles']
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # Change default to Cloudinary if configured
 if os.getenv('CLOUDINARY_CLOUD_NAME'):
@@ -161,6 +165,8 @@ if os.getenv('CLOUDINARY_CLOUD_NAME'):
     STORAGES["default"] = {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
     }
+    # Compatibility for older libraries that don't know about STORAGES['default']
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
