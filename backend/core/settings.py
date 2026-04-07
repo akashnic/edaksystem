@@ -152,7 +152,7 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-
+WHITENOISE_MANIFEST_STRICT = False
 # Compatibility for older libraries (like cloudinary-storage) that don't know about STORAGES
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
