@@ -26,6 +26,7 @@ db.sqlite3
 db.sqlite3-journal
 local_settings.py
 staticfiles/
+
 media/
 
 # Unit test / coverage reports

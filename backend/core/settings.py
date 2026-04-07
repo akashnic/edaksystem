@@ -134,27 +134,26 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Add project static files and frontend dist folder
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
-]
-
+# Add the frontend dist folder to static files search path if it exists (for local dev)
+STATICFILES_DIRS = []
 frontend_dist = os.path.join(BASE_DIR.parent, 'frontend', 'dist')
 if os.path.exists(frontend_dist):
     STATICFILES_DIRS.append(frontend_dist)
 
 # Storage and Whitenoise configuration
+# Using CompressedStaticFilesStorage (not Manifest) to avoid MissingFileError
+# during collectstatic when Django Admin CSS references files not found on disk.
 STORAGES = {
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
     },
 }
-WHITENOISE_MANIFEST_STRICT = False
-# Compatibility for older libraries (like cloudinary-storage) that don't know about STORAGES
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Compatibility for older libraries (like cloudinary-storage) that access legacy settings
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 # Change default to Cloudinary if configured
