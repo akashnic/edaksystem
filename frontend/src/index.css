@@ -1,0 +1,17 @@
+:root {
+  --base-font-size: 100%;
+}
+
+html {
+  font-size: var(--base-font-size);
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans antialiased;
+  }
+}

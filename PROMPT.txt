@@ -1,0 +1,340 @@
+You are a senior full-stack engineer building a production-grade government application.
+Your task is to build a Receive & Dispatch Register System(Responsive mobile + desktop version) with the following requirements
+The system must be cleanly architected, modular, and production ready.
+
+🧱 TECH STACK
+Backend:
+Django
+Django REST Framework (DRF)
+Database:
+PostgreSQL
+Frontend:
+React (Vite) - responsive
+Tailwind CSS
+
+🎯 CORE REQUIREMENT
+This system tracks document lifecycle:
+Receive → Dispatch → Received
+Status flow:
+NEW (Blue)
+DISPATCHED (Red)
+RECEIVED (Grey)
+
+🗄️ BACKEND REQUIREMENTS (DRF)
+📥 Receive Model
+Fields:
+id (Auto → L_ID)
+diary_number (default = 1)
+letter_number
+letter_date
+Sender_name –nullable
+Sender_address –nullable
+Sender_contact –nullable
+Subject –nullable
+date_of_receipt
+remarks (optional) –nullable
+current_status (NEW / DISPATCHED / RECEIVED)
+created_at
+updated_at
+
+📤 Dispatch Model
+Relationship:
+OneToMany with Receive
+Fields:
+id (DispatchID)
+receive (FK / OneToMany)
+receiver_officer_department
+dispatch_number
+receiver_name -at the time of sign
+mobile_number -at the time of sign –nullable
+signature_image (file upload)
+status (NOT_RECEIVED / RECEIVED)
+dispatched_at
+received_at
+
+🔥 BUSINESS LOGIC
+1. Create Receive Entry
+Default status = NEW
+
+2. Dispatch Entry Creation
+Must link using L_ID
+Prevent duplicate dispatch
+Update Receive.current_status → DISPATCHED
+
+3. Mark as Received
+Update dispatch.status → RECEIVED
+Set received_at timestamp
+Update Receive.current_status → RECEIVED
+
+4. APIs (IMPORTANT)
+Create clean REST APIs:
+Receive APIs:
+GET /receive
+POST /receive
+PUT /receive/{id}
+DELETE /receive/{id}
+Dispatch APIs:
+POST /dispatch
+GET /dispatch
+PUT /dispatch/{id}/mark-received
+
+🔎 Filtering & Search
+Filter by:
+date
+subject
+Status
+officer/department
+
+🎨 FRONTEND REQUIREMENTS (React + Tailwind)
+
+🧱 Layout
+Sidebar: (Shutter)
+Logo
+Summary
+Receive Register
+Dispatch Register
+Topbar: 
+Logo
+Search bar
+Language Toogle (English/Hindi)
+Theme toggle (light/dark)
+
+      SUMMARY UI
+1. PENDING LETTERS DATEWISE DESC FORM TODAY
+2. DATE PICKER
+
+📥 RECEIVE TABLE UI
+Columns:
+S.No.
+Letter Detail (letter no + date) 
+Sender Detail (name + address + contact)
+Subject
+Receipt Date
+Remarks
+Status 
+Actions
+
+🎨 Row Color Logic
+NEW → light blue
+DISPATCHED → light red
+RECEIVED → light grey
+
+⚡ Actions Column
+Dispatch Button (only when status = NEW)
+View Button
+Edit Button
+
+📥 RECEIVE FORM 
+
+Input fields:
+Letter Detail 
+letter no 
+Letter date
+Sender Detail (
+name
+address  
+contact
+Subject
+Receipt Date
+Remarks - optional
+
+📤 DISPATCH FORM (Drawer UI)
+When user clicks Dispatch:
+Pre-filled:
+Letter Detail 
+letter no 
+Letter date
+Subject
+Input fields:
+Receiver Officer/Department 
+Dispatch Number
+
+
+Receiver Detail
+Receiver Name
+Contact Number
+
+📊 DISPATCH TABLE UI
+Columns:
+Subject
+Receiver Officer/Department
+Dispatch Number
+Receiver Detail (name + contact)
+Signature (preview/sign)
+Status (badge)
+
+✍️ Signature Feature
+Use canvas (react-signature-canvas)
+Save as image
+
+🎨 Status Badge
+NOT_RECEIVED → yellow
+RECEIVED → green
+
+⚡ UX REQUIREMENTS
+Use Pagination (no. of pages)
+Sticky Column 
+Filterable & Sortable columns if applicable
+Serach bar to search data by text, number, etc(string) 
+Use Toast messages:
+"Dispatched Successfully"
+"Marked as Received"
+Show loading skeleton
+Confirm before delete
+
+🔗 IMPORTANT RULES
+Do NOT duplicate receive data in dispatch table
+Always use FK (L_ID)
+Keep UI fast and clean
+Optimize for data entry speed
+
+📁 OUTPUT FORMAT
+Generate:
+```
+/pages
+  Dashboard.jsx
+  ReceivePage.jsx
+  DispatchPage.jsx
+
+/components
+  /table
+    DataTable.jsx         ✅ reusable table
+    TableToolbar.jsx
+
+  /form
+    FormWrapper.jsx       ✅ reusable form
+    InputField.jsx
+    SignaturePad.jsx
+
+  /receive
+    ReceiveTable.jsx      ✅ config-based
+    ReceiveForm.jsx
+
+  /dispatch
+    DispatchTable.jsx
+    DispatchForm.jsx
+
+  /common
+    Drawer.jsx
+    Button.jsx
+    Badge.jsx
+```
+
+All table labels from separate file
+```
+// configs/receiveColumns.js
+export const receiveColumns = [
+  {
+    key: "l_id",
+    label: "Serial No",
+    sortable: true,
+  },
+  {
+    key: "diary_number",
+    label: "Diary No",
+  },
+  {
+    key: "letter_detail",
+    label: "Letter Detail",
+    render: (row) => `${row.letter_number} (${row.letter_date})`,
+  },
+  {
+    key: "sender_detail",
+    label: "Sender Detail",
+    render: (row) =>
+      `${row.sender_name}, ${row.sender_address}, ${row.sender_contact}`,
+  },
+  {
+    key: "subject",
+    label: "Subject",
+  },
+  {
+    key: "date_of_receipt",
+    label: "Date",
+    sortable: true,
+  },
+  {
+    key: "remarks",
+    label: "Remarks",
+  },
+  {
+    key: "status",
+    label: "Status",
+  },
+];
+
+// configs/dispatchColumns.js
+
+export const dispatchColumns = [
+  {
+    key: "l_id",
+    label: "Serial No",
+  },
+  {
+    key: "subject",
+    label: "Subject",
+  },
+  {
+    key: "receiver_officer",
+    label: "Receiver Officer",
+  },
+  {
+    key: "dispatch_number",
+    label: "Dispatch No",
+  },
+  {
+    key: "receiver_detail",
+    label: "Receiver Detail",
+    render: (row) =>
+      `${row.receiver_name}, ${row.receiver_department}, ${row.mobile_number}`,
+  },
+  {
+    key: "status",
+    label: "Status",
+  },
+];
+
+// configs/receiveFormConfig.js
+
+export const receiveFormFields = [
+  { name: "letter_number", label: "Letter Number", type: "text" },
+  { name: "letter_date", label: "Letter Date", type: "date" },
+  { name: "sender_name", label: "Sender Name", type: "text" },
+  { name: "subject", label: "Subject", type: "text" },
+];
+```
+Architecture (Your Ideal Setup)
+DataTable (Reusable)
+        ↑
+ReceiveTable (Config)
+DispatchTable (Config)
+
+FormWrapper (Reusable)
+        ↑
+ReceiveForm (Config)
+DispatchForm (Config)
+
+
+🎯 GOAL
+Build a clean, minimal, scalable government-grade system that:
+Tracks documents efficiently
+Avoids duplication
+Has excellent UX
+Is easy to extend later
+Making system config-driven
+❌ AVOID:
+One giant table component for everything
+Hardcoding columns inside component
+
+Write clean, readable, production-ready code.
+Generate the complete project with:
+
+Backend Django project  
+React frontend  
+Database schema  
+API endpoints  
+
+Ensure frontend and backend integrate correctly.
+
+The project must be runnable after installing dependencies and running migrations.
+
