@@ -143,14 +143,13 @@ if os.path.exists(frontend_dist):
 # Storage configuration
 # Using plain StaticFilesStorage on the server since the React frontend
 # is hosted on Vercel — no need for compression/fingerprinting here.
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-}
+# Since we're using a mix of modern and legacy libraries, we use the
+# legacy storage settings to avoid 'mutually exclusive' errors in Django 4.2+.
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+# Fix for whitenoise.storage.MissingFileError during collectstatic
+WHITENOISE_MANIFEST_STRICT = False
 
 # Compatibility for older libraries (like cloudinary-storage) that access legacy settings
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
@@ -163,10 +162,7 @@ if os.getenv('CLOUDINARY_CLOUD_NAME'):
         'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
         'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
     }
-    STORAGES["default"] = {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"
-    }
-    # Compatibility mapping for cloudinary-storage
+    # Mapping for cloudinary-storage
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
 
 MEDIA_URL = '/media/'
