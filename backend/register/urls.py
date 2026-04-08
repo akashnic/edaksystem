@@ -7,5 +7,5 @@ router.register(r'receive', ReceiveViewSet)
 router.register(r'dispatch', DispatchViewSet)
 
 urlpatterns = [
-    path('api/', include(router.urls)),
+    path('', include(router.urls)),
 ]
