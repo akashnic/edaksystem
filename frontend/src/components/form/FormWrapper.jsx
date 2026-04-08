@@ -28,6 +28,8 @@ export function FormWrapper({ config, onSubmit, defaultValues = {}, submitLabel 
             );
           }
           
+          // Extract known non-HTML config keys; spread the rest as native input attributes (e.g. max, min)
+          const { name: _n, label: _l, type: _t, required: _r, options: _o, defaultValue: _dv, props: extraProps, ...nativeAttrs } = field;
           return (
             <InputField
               key={field.name}
@@ -39,7 +41,8 @@ export function FormWrapper({ config, onSubmit, defaultValues = {}, submitLabel 
               required={field.required !== false}
               options={field.options}
               defaultValue={field.defaultValue}
-              {...field.props}
+              {...nativeAttrs}
+              {...extraProps}
             />
           );
         })}
