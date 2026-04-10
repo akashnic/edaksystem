@@ -20,6 +20,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
 load_dotenv(os.path.join(BASE_DIR, '.env'))
+# Load overrides from .env.local if it exists
+load_dotenv(os.path.join(BASE_DIR, '.env.local'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -89,12 +91,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.getenv('DATABASE_URL', 'postgres://iwave:@localhost:5432/edaksystem'),
-        conn_max_age=600
-    )
-}
+if os.getenv('USE_SQLITE', 'False') == 'True':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.getenv('DATABASE_URL', 'postgres://iwave:@localhost:5432/edaksystem'),
+            conn_max_age=600
+        )
+    }
 
 
 # Password validation

@@ -111,6 +111,13 @@ const resources = {
       BTN_CANCEL: "Cancel",
       BTN_CONFIRM: "Yes",
       CONFIRM_ACTION: "Confirmation",
+      LOGIN_WELCOME: "Welcome Back",
+      LOGIN_SUBTITLE: "Please enter your credentials to continue",
+      LABEL_USERNAME: "Username",
+      LABEL_PASSWORD: "Password",
+      BTN_SIGN_IN: "Sign In",
+      BTN_AUTHENTICATING: "Authenticating...",
+      CHOOSE_LANGUAGE: "Language",
     }
   },
   hi: {
@@ -221,6 +228,13 @@ const resources = {
       BTN_CANCEL: "रद्द करें",
       BTN_CONFIRM: "हाँ",
       CONFIRM_ACTION: "पुष्टि",
+      LOGIN_WELCOME: "स्वागत है",
+      LOGIN_SUBTITLE: "जारी रखने के लिए कृपया अपना विवरण दर्ज करें",
+      LABEL_USERNAME: "उपयोगकर्ता नाम",
+      LABEL_PASSWORD: "पासवर्ड",
+      BTN_SIGN_IN: "लॉग इन करें",
+      BTN_AUTHENTICATING: "प्रमाणित किया जा रहा है...",
+      CHOOSE_LANGUAGE: "भाषा",
     }
   }
 };
